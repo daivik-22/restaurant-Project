@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Query
 from pydantic import BaseModel
 from typing import List, Optional
 import requests
@@ -13,28 +13,28 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-# Production-safe CORS policy
+# Secure CORS policy
 allowed_origins = [
     "https://restaurenthefoodluv-b2e5b9ajgrhpcdc0.southindia-01.azurewebsites.net",
     "https://www.restaurenthefoodluv-b2e5b9ajgrhpcdc0.southindia-01.azurewebsites.net"
 ]
 
-from fastapi.middleware.cors import CORSMiddleware
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://restaurenthefoodluv-b2e5b9ajgrhpcdc0.southindia-01.azurewebsites.net"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-
 # Jinja2 Templates (used for the homepage)
 templates = Jinja2Templates(directory="templates")
 
-# Google API Key (sourced from environment variables)
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "AIzaSyCwentK-0B51TzTNvmV8qlb619a2_wKDKc")  # WARNING: Do not hardcode API keys in production
+# Google API Key from environment
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "AIzaSyCwentK-0B51TzTNvmV8qlb619a2_wKDKc")
+if not GOOGLE_API_KEY:
+    logger.error("Missing Google API key. Set GOOGLE_API_KEY as environment variable.")
+    raise RuntimeError("Missing GOOGLE_API_KEY")
 
 class Restaurant(BaseModel):
     name: str
@@ -85,11 +85,25 @@ def index(request: Request):
     )
 
 @app.get("/restaurants/{location}", response_model=List[Restaurant])
-async def get_all_restaurants(location: str):
-    return get_restaurants_from_google(location)
-    
+async def get_all_restaurants(
+    location: str,
+    min_rating: float = Query(0.0, ge=0.0, le=5.0),
+    max_price: Optional[int] = Query(None, ge=0, le=4),
+    limit: int = Query(10, ge=1)
+):
+    raw_restaurants = get_restaurants_from_google(location)
+
+    # Apply filters
+    filtered = [
+        r for r in raw_restaurants
+        if r.rating >= min_rating and (max_price is None or (r.price_level is not None and r.price_level <= max_price))
+    ]
+
+    # Sort by rating descending
+    sorted_restaurants = sorted(filtered, key=lambda x: x.rating, reverse=True)
+
+    return sorted_restaurants[:limit]
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
