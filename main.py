@@ -15,7 +15,8 @@ app = FastAPI()
 
 # Production-safe CORS policy
 allowed_origins = [
-    "https://restaurenthefoodluv-b2e5b9ajgrhpcdc0.southindia-01.azurewebsites.net"
+    "https://restaurenthefoodluv-b2e5b9ajgrhpcdc0.southindia-01.azurewebsites.net",
+    "https://www.restaurenthefoodluv-b2e5b9ajgrhpcdc0.southindia-01.azurewebsites.net"
 ]
 
 app.add_middleware(
