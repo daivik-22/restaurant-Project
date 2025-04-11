@@ -13,18 +13,24 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
+# Production-safe CORS policy
+allowed_origins = [
+    "https://restaurenthefoodluv-b2e5b9ajgrhpcdc0.southindia-01.azurewebsites.net"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all domains (change this in production)
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET"],  # Limit to what's needed
+    allow_headers=["Content-Type", "Authorization"],  # Security best practice
 )
 
+# Jinja2 Templates (used for the homepage)
 templates = Jinja2Templates(directory="templates")
 
-# Google API Key (Replace with your actual API Key if not set in environment variables)
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "AIzaSyCwentK-0B51TzTNvmV8qlb619a2_wKDKc")
+# Google API Key (sourced from environment variables)
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "AIzaSyCwentK-0B51TzTNvmV8qlb619a2_wKDKc")  # WARNING: Do not hardcode API keys in production
 
 class Restaurant(BaseModel):
     name: str
@@ -35,7 +41,6 @@ class Restaurant(BaseModel):
     place_id: str
 
 def get_restaurants_from_google(location: str) -> List[Restaurant]:
-    """ Fetch restaurants using Google Places API """
     logger.info(f"Fetching restaurants from Google Places for: {location}")
     url = "https://maps.googleapis.com/maps/api/place/textsearch/json"
     params = {
@@ -77,5 +82,4 @@ def index(request: Request):
 
 @app.get("/restaurants/{location}", response_model=List[Restaurant])
 async def get_all_restaurants(location: str):
-    """ Fetch restaurants directly from Google Places API """
     return get_restaurants_from_google(location)
