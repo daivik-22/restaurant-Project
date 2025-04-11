@@ -19,13 +19,16 @@ allowed_origins = [
     "https://www.restaurenthefoodluv-b2e5b9ajgrhpcdc0.southindia-01.azurewebsites.net"
 ]
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=["https://restaurenthefoodluv-b2e5b9ajgrhpcdc0.southindia-01.azurewebsites.net"],
     allow_credentials=True,
-    allow_methods=["GET", "POST"],  # Limit to what's needed
-    allow_headers=["Content-Type", "Authorization"],  # Security best practice
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
 
 # Jinja2 Templates (used for the homepage)
 templates = Jinja2Templates(directory="templates")
