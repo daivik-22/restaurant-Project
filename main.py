@@ -31,7 +31,7 @@ class Restaurant(BaseModel):
     rating: float
     cuisine: Optional[str] = None
     price_level: Optional[int] = None
-    address: Optional[str] = None
+    address: str
     place_id: str
 
 def get_restaurants_from_google(location: str) -> List[Restaurant]:
