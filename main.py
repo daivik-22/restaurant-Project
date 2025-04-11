@@ -87,3 +87,9 @@ def index(request: Request):
 @app.get("/restaurants/{location}", response_model=List[Restaurant])
 async def get_all_restaurants(location: str):
     return get_restaurants_from_google(location)
+    
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+
