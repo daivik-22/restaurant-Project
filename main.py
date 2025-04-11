@@ -21,11 +21,12 @@ allowed_origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=["*"],  # Replace * with specific domain for production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Jinja2 Templates (used for the homepage)
 templates = Jinja2Templates(directory="templates")
