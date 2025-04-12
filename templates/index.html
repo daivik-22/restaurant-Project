@@ -96,31 +96,6 @@
             </div>
         </div>
 
-        <!-- Filters -->
-        <div class="flex justify-center gap-4 mb-10">
-            <select id="cuisine-filter" class="w-48 p-3 rounded-lg border border-gray-300">
-                <option value="">Cuisine</option>
-                <option value="Italian">Italian</option>
-                <option value="Chinese">Chinese</option>
-                <option value="Indian">Indian</option>
-                <!-- Add more cuisines as needed -->
-            </select>
-            <select id="rating-filter" class="w-48 p-3 rounded-lg border border-gray-300">
-                <option value="">Rating</option>
-                <option value="1">1 Star</option>
-                <option value="2">2 Stars</option>
-                <option value="3">3 Stars</option>
-                <option value="4">4 Stars</option>
-                <option value="5">5 Stars</option>
-            </select>
-            <select id="price-filter" class="w-48 p-3 rounded-lg border border-gray-300">
-                <option value="">Price</option>
-                <option value="1">Cheap</option>
-                <option value="2">Moderate</option>
-                <option value="3">Expensive</option>
-            </select>
-        </div>
-
         <!-- Restaurant List -->
         <div id="restaurant-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
 
@@ -138,9 +113,6 @@
         async function fetchRestaurants(page = 1) {
             currentPage = page;
             const location = document.getElementById("location-input").value.trim();
-            const cuisine = document.getElementById("cuisine-filter").value;
-            const rating = document.getElementById("rating-filter").value;
-            const price = document.getElementById("price-filter").value;
             const restaurantListDiv = document.getElementById("restaurant-list");
             const errorDiv = document.getElementById("error-message");
             const paginationDiv = document.getElementById("pagination");
@@ -156,7 +128,7 @@
             }
 
             try {
-                const response = await fetch(`https://restaurenthefoodluv-b2e5b9ajgrhpcdc0.southindia-01.azurewebsites.net/restaurants/${encodeURIComponent(location)}?page=${page}&cuisine=${cuisine}&rating=${rating}&price=${price}`);
+                const response = await fetch(`https://restaurenthefoodluv-b2e5b9ajgrhpcdc0.southindia-01.azurewebsites.net/restaurants/${encodeURIComponent(location)}?page=${page}`);
                 if (!response.ok) {
                     throw new Error(`Failed to fetch: ${response.status}`);
                 }
