@@ -1,119 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurant Finder</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Custom styles for additional flair */
-        body {
-            background: linear-gradient(135deg, #a8d5e3 0%, #ff78ac 100%);
-            min-height: 100vh;
-        }
-        .restaurant-card {
-            transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
-            cursor: pointer;
-        }
-        .restaurant-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-            background-color: #ddd6d6;
-        }
-        .search-btn {
-            transition: background-color 0.3s ease;
-        }
-        .search-btn:hover {
-            background-color: #1d4ed8;
-        }
-    </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Restaurant Finder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #a8d5e3 0%, #ff78ac 100%);
+      min-height: 100vh;
+    }
+
+    .restaurant-card {
+      transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+      cursor: pointer;
+    }
+
+    .restaurant-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+      background-color: #ddd6d6;
+    }
+
+    .search-btn:hover {
+      background-color: #1d4ed8;
+    }
+
+    .navbar {
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      display: flex;
+      gap: 20px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .navbar a:hover {
+      color: #1d4ed8;
+    }
+
+    .pagination-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
-<body class="flex items-center justify-center">
-    <div class="container mx-auto p-6 max-w-4xl">
-        <!-- Header -->
-        <h1 class="text-4xl font-bold text-gray-800 text-center mb-8">RESTAURANT FINDER</h1>
+<body class="flex flex-col items-center justify-start pt-24 px-4">
 
-        <!-- Search Bar -->
-        <div class="flex justify-center mb-10">
-            <div class="w-full max-w-lg flex gap-2">
-                <input
-                    type="text"
-                    id="location-input"
-                    placeholder="Enter location to find your luv"
-                    class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
-                >
-                <button
-                    onclick="fetchRestaurants()"
-                    class="search-btn bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700"
-                >
-                    Search
-                </button>
-            </div>
-        </div>
+  <!-- Navbar -->
+  <div class="navbar text-lg">
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
 
-        <!-- Restaurant List -->
-        <div id="restaurant-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+  <!-- Header -->
+  <div class="container mx-auto p-6 max-w-4xl">
+    <h1 class="text-4xl font-bold text-gray-800 text-center mb-8">RESTAURANT FINDER</h1>
 
-        <!-- Error Message -->
-        <div id="error-message" class="text-red-500 text-center mt-4"></div>
+    <!-- Search -->
+    <div class="flex justify-center mb-10">
+      <div class="w-full max-w-lg flex gap-2">
+        <input
+          type="text"
+          id="location-input"
+          placeholder="Enter location to find your luv"
+          class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+        >
+        <button
+          onclick="fetchRestaurants(1)"
+          class="search-btn bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold"
+        >
+          Search
+        </button>
+      </div>
     </div>
 
-    <script>
-        async function fetchRestaurants() {
-            const location = document.getElementById("location-input").value.trim();
-            const restaurantListDiv = document.getElementById("restaurant-list");
-            const errorDiv = document.getElementById("error-message");
+    <!-- Restaurant List -->
+    <div id="restaurant-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
 
-            // Clear previous results
-            restaurantListDiv.innerHTML = "";
-            errorDiv.innerHTML = "";
+    <!-- Pagination Controls -->
+    <div class="flex justify-center gap-4 mt-6">
+      <button id="prev-btn" class="pagination-btn bg-gray-700 text-white px-4 py-2 rounded" onclick="changePage(-1)">Previous</button>
+      <button id="next-btn" class="pagination-btn bg-gray-700 text-white px-4 py-2 rounded" onclick="changePage(1)">Next</button>
+    </div>
 
-            if (!location) {
-                errorDiv.innerHTML = "Please enter a location.";
-                return;
-            }
+    <!-- Error Message -->
+    <div id="error-message" class="text-red-500 text-center mt-4"></div>
+  </div>
 
-            try {
-                const response = await fetch(`https://restaurenthefoodluv-b2e5b9ajgrhpcdc0.southindia-01.azurewebsites.net/restaurants/${encodeURIComponent(location)}`);                if (!response.ok) {
-                    throw new Error(`Failed to fetch: ${response.status}`);
-                }
-                const restaurants = await response.json();
+  <script>
+    let currentPage = 1;
+    let totalPages = 1;
+    let currentRestaurants = [];
 
-                if (restaurants.length === 0) {
-                    restaurantListDiv.innerHTML = '<p class="text-gray-500 text-center col-span-full">No restaurants found for this location.</p>';
-                } else {
-                    restaurants.forEach(restaurant => {
-                        const card = document.createElement("div");
-                        card.className = "restaurant-card bg-white p-5 rounded-lg shadow-md";
-                        card.innerHTML = `
-                            <h3 class="text-xl font-semibold text-gray-800">${restaurant.name}</h3>
-                            <p class="text-gray-600">Rating: <span class="font-medium">${restaurant.rating || "N/A"}</span></p>
-                            <p class="text-gray-600">Cuisine: <span class="font-medium">${restaurant.cuisine || "N/A"}</span></p>
-                            <p class="text-gray-600">Price: <span class="font-medium">${restaurant.price_level ? "$".repeat(restaurant.price_level) : "N/A"}</span></p>
-                            <p class="text-gray-600">Address: <span class="font-medium">${restaurant.address || "N/A"}</span></p>
-                        `;
-                        // Add click event to open Google Maps
-                        card.addEventListener("click", () => {
-                            const address = restaurant.address || `${restaurant.name}, ${location}`;
-                            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
-                            window.open(mapsUrl, "_blank");
-                        });
-                        restaurantListDiv.appendChild(card);
-                    });
-                }
-            } catch (error) {
-                errorDiv.innerHTML = `Error: ${error.message}`;
-                console.error("Fetch error:", error);
-            }
+    async function fetchRestaurants(page = 1) {
+      const location = document.getElementById("location-input").value.trim();
+      const restaurantListDiv = document.getElementById("restaurant-list");
+      const errorDiv = document.getElementById("error-message");
+      restaurantListDiv.innerHTML = "";
+      errorDiv.innerHTML = "";
+
+      if (!location) {
+        errorDiv.innerHTML = "Please enter a location.";
+        return;
+      }
+
+      try {
+        const response = await fetch(`https://restaurenthefoodluv-b2e5b9ajgrhpcdc0.southindia-01.azurewebsites.net/restaurants/${encodeURIComponent(location)}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch: ${response.status}`);
         }
+        const data = await response.json();
+        currentRestaurants = data || [];
+        totalPages = Math.min(Math.ceil(currentRestaurants.length / 4), 5);
+        currentPage = page;
 
-        // Allow pressing Enter to search
-        document.getElementById("location-input").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                fetchRestaurants();
-            }
+        renderPage();
+      } catch (error) {
+        errorDiv.innerHTML = `Error: ${error.message}`;
+        console.error("Fetch error:", error);
+      }
+    }
+
+    function renderPage() {
+      const restaurantListDiv = document.getElementById("restaurant-list");
+      restaurantListDiv.innerHTML = "";
+
+      const start = (currentPage - 1) * 4;
+      const end = start + 4;
+      const pageData = currentRestaurants.slice(start, end);
+
+      if (pageData.length === 0) {
+        restaurantListDiv.innerHTML = '<p class="text-gray-500 text-center col-span-full">No restaurants found.</p>';
+        return;
+      }
+
+      pageData.forEach(restaurant => {
+        const card = document.createElement("div");
+        card.className = "restaurant-card bg-white p-5 rounded-lg shadow-md";
+        card.innerHTML = `
+          <h3 class="text-xl font-semibold text-gray-800">${restaurant.name}</h3>
+          <p class="text-gray-600">Address: <span class="font-medium">${restaurant.address || "N/A"}</span></p>
+        `;
+        card.addEventListener("click", () => {
+          const address = restaurant.address || `${restaurant.name}`;
+          const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+          window.open(mapsUrl, "_blank");
         });
-    </script>
+        restaurantListDiv.appendChild(card);
+      });
+
+      document.getElementById("prev-btn").disabled = currentPage === 1;
+      document.getElementById("next-btn").disabled = currentPage === totalPages;
+    }
+
+    function changePage(direction) {
+      const newPage = currentPage + direction;
+      if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        renderPage();
+      }
+    }
+
+    document.getElementById("location-input").addEventListener("keypress", function (event) {
+      if (event.key === "Enter") {
+        fetchRestaurants(1);
+      }
+    });
+  </script>
+
 </body>
 </html>
