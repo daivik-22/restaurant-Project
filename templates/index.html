@@ -8,6 +8,7 @@
   <style>
     body {
       background: linear-gradient(135deg, #a8d5e3 0%, #ff78ac 100%);
+      scroll-behavior: smooth;
       min-height: 100vh;
     }
 
@@ -22,20 +23,6 @@
       background-color: #ddd6d6;
     }
 
-    .search-btn:hover {
-      background-color: #1d4ed8;
-    }
-
-    .navbar {
-      position: absolute;
-      top: 20px;
-      left: 30px;
-      display: flex;
-      gap: 20px;
-      font-weight: bold;
-      color: white;
-    }
-
     .navbar a:hover {
       color: #1d4ed8;
     }
@@ -44,9 +31,20 @@
       background-color: #ccc;
       cursor: not-allowed;
     }
+
+    .navbar {
+      position: fixed;
+      top: 20px;
+      left: 30px;
+      display: flex;
+      gap: 20px;
+      font-weight: bold;
+      color: white;
+      z-index: 1000;
+    }
   </style>
 </head>
-<body class="flex flex-col items-center justify-start pt-24 px-4">
+<body class="pt-24 px-4 flex flex-col items-center justify-start">
 
   <!-- Navbar -->
   <div class="navbar text-lg">
@@ -55,8 +53,8 @@
     <a href="#contact">Contact</a>
   </div>
 
-  <!-- Header -->
-  <div class="container mx-auto p-6 max-w-4xl">
+  <!-- Home Section -->
+  <section id="home" class="container mx-auto p-6 max-w-4xl">
     <h1 class="text-4xl font-bold text-gray-800 text-center mb-8">RESTAURANT FINDER</h1>
 
     <!-- Search -->
@@ -70,7 +68,7 @@
         >
         <button
           onclick="fetchRestaurants(1)"
-          class="search-btn bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold"
+          class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700"
         >
           Search
         </button>
@@ -80,7 +78,7 @@
     <!-- Restaurant List -->
     <div id="restaurant-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
 
-    <!-- Pagination Controls -->
+    <!-- Pagination -->
     <div class="flex justify-center gap-4 mt-6">
       <button id="prev-btn" class="pagination-btn bg-gray-700 text-white px-4 py-2 rounded" onclick="changePage(-1)">Previous</button>
       <button id="next-btn" class="pagination-btn bg-gray-700 text-white px-4 py-2 rounded" onclick="changePage(1)">Next</button>
@@ -88,7 +86,23 @@
 
     <!-- Error Message -->
     <div id="error-message" class="text-red-500 text-center mt-4"></div>
-  </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="w-full max-w-4xl bg-white bg-opacity-70 mt-12 p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">About</h2>
+    <p class="text-gray-700">
+      Restaurant Finder helps you locate the best places to eat based on your current or searched location. We display restaurants with ratings and pricing to help you decide faster. Built for food lovers!
+    </p>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="w-full max-w-4xl bg-white bg-opacity-70 mt-12 p-6 rounded-lg shadow-md mb-12">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Contact</h2>
+    <p class="text-gray-700">
+      Got feedback or suggestions? Reach out to us at: <a href="mailto:support@foodluv.com" class="text-blue-700 underline">support@foodluv.com</a>
+    </p>
+  </section>
 
   <script>
     let currentPage = 1;
@@ -116,7 +130,6 @@
         currentRestaurants = data || [];
         totalPages = Math.min(Math.ceil(currentRestaurants.length / 4), 5);
         currentPage = page;
-
         renderPage();
       } catch (error) {
         errorDiv.innerHTML = `Error: ${error.message}`;
@@ -142,6 +155,8 @@
         card.className = "restaurant-card bg-white p-5 rounded-lg shadow-md";
         card.innerHTML = `
           <h3 class="text-xl font-semibold text-gray-800">${restaurant.name}</h3>
+          <p class="text-gray-600">Rating: <span class="font-medium">${restaurant.rating || "N/A"}</span></p>
+          <p class="text-gray-600">Price: <span class="font-medium">${restaurant.price_level ? "$".repeat(restaurant.price_level) : "N/A"}</span></p>
           <p class="text-gray-600">Address: <span class="font-medium">${restaurant.address || "N/A"}</span></p>
         `;
         card.addEventListener("click", () => {
