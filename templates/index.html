@@ -164,7 +164,7 @@
 
                 // Check if data and restaurants are defined
                 if (!data || !Array.isArray(data.restaurants)) {
-                    throw new Error("Invalid API response structure.");
+                    throw new Error("Invalid API response structure or 'restaurants' not found.");
                 }
 
                 const restaurants = data.restaurants;
