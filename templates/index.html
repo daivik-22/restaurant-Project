@@ -9,6 +9,8 @@
     body {
       background: linear-gradient(135deg, #a8d5e3 0%, #ff78ac 100%);
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     .restaurant-card {
@@ -28,6 +30,10 @@
     .hidden-section {
       display: none;
     }
+
+    main {
+      flex: 1;
+    }
   </style>
 </head>
 <body class="pt-24 px-4 flex flex-col items-center">
@@ -39,57 +45,64 @@
     <a href="#" onclick="showSection('contact')">Contact</a>
   </nav>
 
-  <!-- Home Section -->
-  <div id="home" class="w-full max-w-4xl hidden-section">
-    <h1 class="text-4xl font-bold text-gray-800 text-center mb-8">MEKKESI PO</h1>
-    <div class="flex justify-center mb-10">
-      <div class="w-full max-w-lg flex gap-2">
-        <input
-          type="text"
-          id="location-input"
-          placeholder="Enter location to find your luv"
-          class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
-        >
-        <button
-          onclick="fetchRestaurants(1)"
-          class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700"
-        >
-          Search
-        </button>
+  <main class="w-full flex flex-col items-center">
+    <!-- Home Section -->
+    <div id="home" class="w-full max-w-4xl hidden-section">
+      <h1 class="text-4xl font-bold text-gray-800 text-center mb-8">MEKKESI PO</h1>
+      <div class="flex justify-center mb-10">
+        <div class="w-full max-w-lg flex gap-2">
+          <input
+            type="text"
+            id="location-input"
+            placeholder="Enter location to find your luv"
+            class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+          >
+          <button
+            onclick="fetchRestaurants(1)"
+            class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700"
+          >
+            Search
+          </button>
+        </div>
       </div>
+
+      <div id="restaurant-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+
+      <div class="flex justify-center gap-4 mt-6">
+        <button id="prev-btn" class="bg-gray-700 text-white px-4 py-2 rounded" onclick="changePage(-1)">Previous</button>
+        <button id="next-btn" class="bg-gray-700 text-white px-4 py-2 rounded" onclick="changePage(1)">Next</button>
+      </div>
+
+      <div id="error-message" class="text-red-500 text-center mt-4"></div>
     </div>
 
-    <div id="restaurant-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
-
-    <div class="flex justify-center gap-4 mt-6">
-      <button id="prev-btn" class="bg-gray-700 text-white px-4 py-2 rounded" onclick="changePage(-1)">Previous</button>
-      <button id="next-btn" class="bg-gray-700 text-white px-4 py-2 rounded" onclick="changePage(1)">Next</button>
+    <!-- About Section -->
+    <div id="about" class="hidden-section bg-white mt-24 p-8 rounded-lg shadow-lg max-w-2xl">
+      <h1 class="text-3xl font-bold mb-4 text-gray-800">About Us</h1>
+      <p class="text-gray-700">
+        Restaurant Finder helps you explore top-rated restaurants in your area.
+        We are dedicated find your crush(food) and have it with your crush if available or have food to digest that you are single.
+        but dont forget to pay the bill even if you had crush or single. When it comes to bill you are forever single.
+      </p>
     </div>
 
-    <div id="error-message" class="text-red-500 text-center mt-4"></div>
-  </div>
+    <!-- Contact Section -->
+    <div id="contact" class="hidden-section bg-white mt-24 p-8 rounded-lg shadow-lg max-w-2xl">
+      <h1 class="text-3xl font-bold mb-4 text-gray-800">Contact Us</h1>
+      <p class="text-gray-700 mb-2">
+        For support , email us. For food related issues do not contact us thank you! :
+      </p>
+      <a href="mailto:naamailneekuendukurapokodi@foodluv.com" class="text-blue-600 underline">naamailneekuendukurapokodi@foodluv.com</a>
+    </div>
+  </main>
 
-  <!-- About Section -->
-  <div id="about" class="hidden-section bg-white mt-24 p-8 rounded-lg shadow-lg max-w-2xl">
-    <h1 class="text-3xl font-bold mb-4 text-gray-800">About Us</h1>
-    <p class="text-gray-700">
-      Restaurant Finder helps you explore top-rated restaurants in your area.
-      We are dedicated find your crush(food) and have it with your crush if available or have food to digest that you are single.
-      but dont forget to pay the bill even if you had crush or single. When it comes to bill you are forever single.
-    </p>
-  </div>
-
-  <!-- Contact Section -->
-  <div id="contact" class="hidden-section bg-white mt-24 p-8 rounded-lg shadow-lg max-w-2xl">
-    <h1 class="text-3xl font-bold mb-4 text-gray-800">Contact Us</h1>
-    <p class="text-gray-700 mb-2">
-      For support , email us. For food related issues do not contact us thank you! :
-    </p>
-    <a href="mailto:naamailneekuendukurapokodi@foodluv.com" class="text-blue-600 underline">naamailneekuendukurapokodi@foodluv.com</a>
-  </div>
-  <footer style="text-align: center; padding: 1em 0; font-size: 0.9rem; color: #888;">
-    &copy; 2025 Chinmay Kaushik. All rights reserved.
-</footer>
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white text-center py-4 text-sm w-full mt-8">
+    <span class="flex justify-center items-center gap-1">
+      <span>&copy;</span>
+      <span>2025 Chinmay Kaushik. All rights reserved.</span>
+    </span>
+  </footer>
 
   <!-- JavaScript -->
   <script>
