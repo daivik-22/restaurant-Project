@@ -3,32 +3,52 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mekkesi po</title>
+  <title>DINE & SEEK</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      background: linear-gradient(135deg, #a8d5e3 0%, #ff78ac 100%);
+      background-color: #1e1e1e;
+      color: #e5e7eb;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
     .restaurant-card {
+      background-color: #2c2c2c;
+      color: #e5e7eb;
       transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
       cursor: pointer;
     }
 
     .restaurant-card:hover {
       transform: translateY(-5px);
-      background-color: #ddd6d6;
-    }
-
-    nav a:hover {
-      color: #1d4ed8;
+      background-color: #eeeeee;
     }
 
     .hidden-section {
       display: none;
+    }
+    input, .bg-white {
+      background-color: #2a2a2a;
+      color: #e5e7eb;
+      border-color: #444;
+    }
+
+    input::placeholder {
+      color: #aaa;
+    }
+
+    main {
+      flex: 1;
+    }
+
+    .sidebar-collapsed {
+      transform: translateX(-100%);
+    }
+
+    .sidebar-expanded {
+      transform: translateX(0);
     }
 
     main {
@@ -36,32 +56,45 @@
     }
   </style>
 </head>
-<body class="pt-24 px-4 flex flex-col items-center">
+<body class="pt-20 px-4 flex flex-col items-center relative">
 
-  <!-- Navbar -->
-  <nav class="fixed top-4 left-6 flex gap-6 text-white font-bold text-lg z-50">
-    <a href="#" onclick="showSection('home')">Home</a>
-    <a href="#" onclick="showSection('about')">About</a>
-    <a href="#" onclick="showSection('contact')">Contact</a>
-  </nav>
+  <!-- Sidebar -->
+  <div id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-[#1e1e1e] text-white flex flex-col items-start px-6 py-10 z-50 transform transition-transform duration-300 -translate-x-full">
+    <button onclick="toggleSidebar()" class="mb-6 self-end text-white text-xl">✕</button>
+    <a href="#" class="mb-4 text-lg font-bold hover:text-blue-400" onclick="navigateTo('home')">Home</a>
+    <a href="#" class="mb-4 text-lg font-bold hover:text-blue-400" onclick="navigateTo('about')">About</a>
+    <a href="#" class="text-lg font-bold hover:text-blue-400" onclick="navigateTo('contact')">Contact</a>
+  </div>
+
+  <!-- Sidebar Toggle -->
+  <button onclick="toggleSidebar()" class="fixed top-4 left-4 z-50 text-white bg-gray-900 px-3 py-2 rounded-md hover:bg-gray-700">
+    ☰
+  </button>
 
   <main class="w-full flex flex-col items-center">
+
     <!-- Home Section -->
     <div id="home" class="w-full max-w-4xl hidden-section">
-      <h1 class="text-4xl font-bold text-gray-800 text-center mb-8">MEKKESI PO</h1>
+      <h1 class="text-4xl font-bold text-white text-center mb-8">DINE & SEEK</h1>
+
+      <!-- Search Bar -->
       <div class="flex justify-center mb-10">
-        <div class="w-full max-w-lg flex gap-2">
+        <div class="w-full max-w-xl relative">
           <input
             type="text"
             id="location-input"
             placeholder="Enter location to find your luv"
-            class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
-          >
+            class="w-full p-3 pl-4 pr-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white-700"
+          />
           <button
             onclick="fetchRestaurants(1)"
-            class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700"
+            class="absolute right-2 top-2.5 text-blue-600 hover:text-blue-800"
           >
-            Search
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+              viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"/>
+            </svg>
           </button>
         </div>
       </div>
@@ -77,20 +110,20 @@
     </div>
 
     <!-- About Section -->
-    <div id="about" class="hidden-section bg-white mt-24 p-8 rounded-lg shadow-lg max-w-2xl">
-      <h1 class="text-3xl font-bold mb-4 text-gray-800">About Us</h1>
-      <p class="text-gray-700">
+    <div id="about" class="hidden-section bg-gray-800 mt-24 p-8 rounded-lg shadow-lg max-w-2xl text-white">
+      <h1 class="text-3xl font-bold mb-4">About Us</h1>
+      <p>
         Restaurant Finder helps you explore top-rated restaurants in your area.
-        We are dedicated find your crush(food) and have it with your crush if available or have food to digest that you are single.
-        but dont forget to pay the bill even if you had crush or single. When it comes to bill you are forever single.
+        We are dedicated find your crush (food) and have it with your crush if available or have food to digest that you are single.
+        But don’t forget to pay the bill whether you are with your crush or single. When it comes to the bill, you are forever single.
       </p>
     </div>
 
     <!-- Contact Section -->
-    <div id="contact" class="hidden-section bg-white mt-24 p-8 rounded-lg shadow-lg max-w-2xl">
-      <h1 class="text-3xl font-bold mb-4 text-gray-800">Contact Us</h1>
-      <p class="text-gray-700 mb-2">
-        For support , email us. For food related issues do not contact us thank you! :
+    <div id="contact" class="hidden-section bg-gray-800 mt-24 p-8 rounded-lg shadow-lg max-w-2xl text-white">
+      <h1 class="text-3xl font-bold mb-4">About Us</h1>
+      <p>
+        For support, email us. For food-related issues do not contact us, thank you! :
       </p>
       <a href="mailto:naamailneekuendukurapokodi@foodluv.com" class="text-blue-600 underline">naamailneekuendukurapokodi@foodluv.com</a>
     </div>
@@ -104,18 +137,28 @@
     </span>
   </footer>
 
-  <!-- JavaScript -->
+  <!-- Scripts -->
   <script>
     let currentPage = 1;
     let totalPages = 1;
     let currentRestaurants = [];
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      sidebar.classList.toggle("-translate-x-full");
+    }
+
+    function navigateTo(id) {
+      showSection(id);
+      toggleSidebar(); // Close sidebar after selecting a section
+    }
 
     function showSection(id) {
       document.querySelectorAll('.hidden-section').forEach(div => div.style.display = 'none');
       document.getElementById(id).style.display = 'block';
     }
 
-    // Default show Home
+    // Default section
     showSection('home');
 
     async function fetchRestaurants(page = 1) {
