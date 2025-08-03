@@ -1,4 +1,4 @@
-**Dine and Seek**
+# Dine and Seek
 
 Dine and Seek is a comprehensive web application developed to make restaurant discovery fast, reliable, and enjoyable.
 Designed and built by Parasa Chinmay Kaushik, Vasantha Lakshmi, and Daivik Reddy, this project tackles common challenges in food discovery platforms—such as fragmented data and poor filtering—by offering a seamless, user-centric solution.
